@@ -34,6 +34,7 @@ from tensorflow.contrib.tpu.python.tpu import async_checkpoint
 from tensorflow.contrib.training.python.training import evaluation
 from tensorflow.core.protobuf import rewriter_config_pb2
 from tensorflow.python.estimator import estimator
+import tensorflow as _select_tables_from_flags
 
 FLAGS = flags.FLAGS
 
@@ -338,6 +339,16 @@ def model_fn(features, labels, mode, params):
       logits = tf.cast(build_model(), tf.float32)
   else:
     logits = build_model()
+
+  #从checkpoint中，恢复变量值
+  tf.logging.info("GLOBAL_VARIABLES:")
+  assign_map_restore = {}
+  for vn in tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES):
+    if 'dense' not in vn.op.name and 'global_step' not in vn.op.name:
+      assign_map_restore[vn.op.name]=vn.op.name
+      #variables_to_restore.append(vn) 
+      tf.logging.info(str(vn))
+  tf.compat.v1.train.init_from_checkpoint('./efficientnet-b0/model.ckpt', assign_map_restore)  
 
   if mode == tf.estimator.ModeKeys.PREDICT:
     predictions = {
