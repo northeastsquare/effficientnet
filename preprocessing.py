@@ -90,12 +90,13 @@ def _decode_and_random_crop(image_bytes, image_size):
   image = distorted_bounding_box_crop(
       image_bytes,
       bbox,
-      min_object_covered=0.1,
+      min_object_covered=0.75,
       aspect_ratio_range=(3. / 4, 4. / 3.),
-      area_range=(0.08, 1.0),
+      area_range=(0.75, 1.0),
       max_attempts=10,
       scope=None)
   original_shape = tf.image.extract_jpeg_shape(image_bytes)
+  #image = tf.print(image, [original_shape, tf.shape(image)], "original_shape imageshape:")
   bad = _at_least_x_are_equal(original_shape, tf.shape(image), 3)
 
   image = tf.cond(

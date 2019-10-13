@@ -240,6 +240,10 @@ class ImageNetTFExampleInput(object):
 
     # Prefetch overlaps in-feed with training
     dataset = dataset.prefetch(tf.contrib.data.AUTOTUNE)
+    iterator = tf.data.Iterator.from_structure(dataset.output_types, dataset.output_shapes)
+    # Batch consists of [image, label]
+    next_batch = iterator.get_next()
+    tf.contrib.summary.image("dataset", next_batch[0])
     return dataset
 
 

@@ -442,6 +442,7 @@ def model_fn(features, labels, mode, params):
           with tf.contrib.summary.always_record_summaries():
             tf.contrib.summary.scalar('learning_rate', lr[0], step=gs)
             tf.contrib.summary.scalar('current_epoch', ce[0], step=gs)
+            tf.contrib.summary.image("features", features)
 
             return tf.contrib.summary.all_summary_ops()
 
