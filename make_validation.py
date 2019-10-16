@@ -24,9 +24,9 @@ for root, dir,fs in os.walk(wkdir):
     ids = np.random.permutation(nimages)
     num_val = (int)(0.3 * nimages)
     label = root.split(os.sep)[-1]
-    print("label:", label, 'total:', nimages, " chose:", num_val)
+    print("label:", label, 'total:', nimages, " chose:", num_val, '  ids:', ids)
     for i in range(num_val):
-        val_list.append(images[i])
+        val_list.append(images[ids[i]])
 #拷贝验证集图片，并在原目录删除
 if not os.path.exists(val_dir):
     os.mkdir(val_dir)
@@ -40,7 +40,7 @@ for fn in val_list:
     val_labels.append(vallabel)
     dst = os.path.join(val_dir, valfn)
     shutil.copy(fn, dst)
-    os.remove(fn)
+    #os.remove(fn)
     print("copying ", fn, dst)
 nval = len(val_fnames)
 #对验证集图片排序，并写入synset_labels.txt
