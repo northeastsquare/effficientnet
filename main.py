@@ -18,6 +18,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import math
 import os
 import time
 from absl import app
@@ -404,8 +405,23 @@ def model_fn(features, labels, mode, params):
     # Batch normalization requires UPDATE_OPS to be added as a dependency to
     # the train operation.
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+    #add gradient clip
+    var_list = tf.trainable_variables()
+    grads_and_vars = optimizer.compute_gradients(loss, var_list)
+    old_grads, variables = zip(*grads_and_vars)
+
+    num_weights = sum(
+            g.shape.num_elements() for g in old_grads if g is not None)
+    clip_norm = 0.02 * math.sqrt(num_weights)
+    gradients, _ = tf.clip_by_global_norm(var_list, clip_norm)
+    for grad, var in zip(gradients, variables):
+      if grad is not None and ('beta' in var.name or 'bias' in var.name):
+        grad = 2.0 * grad
+      grads_and_vars.append((grad, var))
+
     with tf.control_dependencies(update_ops):
-      train_op = optimizer.minimize(loss, global_step)
+      optimizer.apply_gradients(grads_and_vars, global_step)
+      #train_op = optimizer.minimize(loss, global_step)
 
     if has_moving_average_decay:
       with tf.control_dependencies([train_op]):

@@ -98,18 +98,18 @@ def _decode_and_random_crop(image_bytes, image_size):
   original_shape = tf.image.extract_jpeg_shape(image_bytes)
   #image = tf.print(image, [original_shape, tf.shape(image)], "original_shape imageshape:")
   bad = _at_least_x_are_equal(original_shape, tf.shape(image), 3)
-  bad = tf.cast(bad, tf.bool)
+  #bad = tf.cast(bad, tf.bool)
   bad = tf.Print(bad, [bad], 'bad:', name='inprint')
-  # image = tf.cond(
-  #     bad,
-  #     lambda: _decode_and_center_crop(image_bytes, image_size),
-  #     lambda: tf.image.resize_bicubic([image],  # pylint: disable=g-long-lambda
-  #                                     [image_size, image_size])[0], name='tfcond')
   image = tf.cond(
       bad,
       lambda: _decode_and_center_crop(image_bytes, image_size),
-      lambda: tf.image.resize_images([image],  # pylint: disable=g-long-lambda
+      lambda: tf.image.resize_bicubic([image],  # pylint: disable=g-long-lambda
                                       [image_size, image_size])[0], name='tfcond')
+  # image = tf.cond(
+  #     bad,
+  #     lambda: _decode_and_center_crop(image_bytes, image_size),
+  #     lambda: tf.image.resize_images([image],  # pylint: disable=g-long-lambda
+  #                                     [image_size, image_size])[0], name='tfcond')
 
   return image
 
