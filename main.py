@@ -424,7 +424,7 @@ def model_fn(features, labels, mode, params):
       #train_op = optimizer.minimize(loss, global_step)
 
     if has_moving_average_decay:
-      with tf.control_dependencies([train_op]):
+      with tf.control_dependencies([update_ops]):
         train_op = ema.apply(ema_vars)
 
     if not FLAGS.skip_host_call:

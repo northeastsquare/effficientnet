@@ -99,7 +99,7 @@ def _decode_and_random_crop(image_bytes, image_size):
   #image = tf.print(image, [original_shape, tf.shape(image)], "original_shape imageshape:")
   bad = _at_least_x_are_equal(original_shape, tf.shape(image), 3)
   #bad = tf.cast(bad, tf.bool)
-  bad = tf.Print(bad, [bad], 'bad:', name='inprint')
+  #bad = tf.Print(bad, [bad], 'bad:', name='inprint')
   image = tf.cond(
       bad,
       lambda: _decode_and_center_crop(image_bytes, image_size),
