@@ -153,6 +153,15 @@ class ImageNetTFExampleInput(object):
         use_bfloat16=self.use_bfloat16,
         autoaugment_name=self.autoaugment_name)
 
+    with tf.contrib.summary.create_file_writer(
+      './checkpoint', max_queue=185).as_default():
+          with tf.contrib.summary.always_record_summaries():
+            ibs = tf.io.decode_jpeg(image_bytes)
+            ibs = tf.expand_dims(ibs, 0)
+            tf.contrib.summary.image("image_bytes", ibs)
+            image2 = tf.expand_dims(image, 0)
+            tf.contrib.summary.image("image_preprocessing_fn", image2)
+
     # The labels will be in range [1,1000], 0 is reserved for background
     label = tf.cast(
         tf.reshape(parsed['image/class/label'], shape=[]), dtype=tf.int32)
