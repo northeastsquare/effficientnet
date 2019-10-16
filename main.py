@@ -420,11 +420,11 @@ def model_fn(features, labels, mode, params):
       grads_and_vars.append((grad, var))
 
     with tf.control_dependencies(update_ops):
-      optimizer.apply_gradients(grads_and_vars, global_step)
+      train_op= optimizer.apply_gradients(grads_and_vars, global_step)
       #train_op = optimizer.minimize(loss, global_step)
 
     if has_moving_average_decay:
-      with tf.control_dependencies([update_ops]):
+      with tf.control_dependencies([train_op]):
         train_op = ema.apply(ema_vars)
 
     if not FLAGS.skip_host_call:
