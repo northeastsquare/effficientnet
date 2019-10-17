@@ -171,7 +171,7 @@ class ImageNetTFExampleInput(object):
       label -= 1
 
     onehot_label = tf.one_hot(label, self.num_label_classes)
-    onehot_label = tf.Print(onehot_label, [onehot_label, label, self.num_label_classes], 'onehot_label')
+    onehot_label = tf.Print(onehot_label, [onehot_label, label, self.num_label_classes], 'onehot_label', first_n=10)
 
     return image, onehot_label
 
