@@ -631,7 +631,7 @@ def main(unused_argv):
 
   # For imagenet dataset, include background label if number of output classes
   # is 1001
-  include_background_label = True#(FLAGS.num_label_classes == 1001)
+  include_background_label = False#(FLAGS.num_label_classes == 1001)
 
   if FLAGS.tpu or FLAGS.use_tpu:
     tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
