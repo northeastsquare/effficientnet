@@ -100,16 +100,16 @@ def _decode_and_random_crop(image_bytes, image_size):
   bad = _at_least_x_are_equal(original_shape, tf.shape(image), 3)
   #bad = tf.cast(bad, tf.bool)
   #bad = tf.Print(bad, [bad], 'bad:', name='inprint')
-  image = tf.cond(
-      bad,
-      lambda: _decode_and_center_crop(image_bytes, image_size),
-      lambda: tf.image.resize_bicubic([image],  # pylint: disable=g-long-lambda
-                                      [image_size, image_size])[0], name='tfcond')
   # image = tf.cond(
   #     bad,
   #     lambda: _decode_and_center_crop(image_bytes, image_size),
-  #     lambda: tf.image.resize_images([image],  # pylint: disable=g-long-lambda
+  #     lambda: tf.image.resize_bicubic([image],  # pylint: disable=g-long-lambda
   #                                     [image_size, image_size])[0], name='tfcond')
+  image = tf.cond(
+      bad,
+      lambda: _decode_and_center_crop(image_bytes, image_size),
+      lambda: tf.image.resize_images([image],  # pylint: disable=g-long-lambda
+                                      [image_size, image_size])[0], name='tfcond')
 
   return image
 
@@ -137,6 +137,7 @@ def _decode_and_center_crop(image_bytes, image_size):
 def _flip(image):
   """Random horizontal image flip."""
   image = tf.image.random_flip_left_right(image)
+  image = tf.image.random_flip_up_down(image)
   return image
 
 
@@ -157,6 +158,9 @@ def preprocess_for_train(image_bytes, use_bfloat16, image_size=IMAGE_SIZE,
   """
   image = _decode_and_random_crop(image_bytes, image_size)
   image = _flip(image)
+  #random rotate image 
+  angle = tf.random.uniform([],minval=0.0, maxval=2*3.1415926, dtype = tf.float32, name='random_angle')
+  image = tf.contrib.image.rotate(image, angle)
   image = tf.reshape(image, [image_size, image_size, 3])
   image = tf.image.convert_image_dtype(
       image, dtype=tf.bfloat16 if use_bfloat16 else tf.float32)
