@@ -349,7 +349,7 @@ def model_fn(features, labels, mode, params):
       assign_map_restore[vn.op.name]=vn.op.name
       #variables_to_restore.append(vn) 
       #tf.logging.info(str(vn))
-  tf.compat.v1.train.init_from_checkpoint('./efficientnet-b0/model.ckpt', assign_map_restore)  
+  tf.compat.v1.train.init_from_checkpoint('./efficientnet-b5/model.ckpt', assign_map_restore)  
 
   if mode == tf.estimator.ModeKeys.PREDICT:
     predictions = {
